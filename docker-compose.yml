@@ -1,0 +1,19 @@
+services:
+  strongsort-yolo:
+    container_name: strongsort-yolo
+    tty: true
+    image: python:3.8.6-slim
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    shm_size: '1000g'
+    restart: always
+    volumes:
+     - ./:/workspace
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: ['gpu']

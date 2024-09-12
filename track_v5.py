@@ -87,6 +87,7 @@ def run(
         dnn=False,  # use OpenCV DNN for ONNX inference
         count=False,  # get counts of every obhects
         draw=False,  # draw object trajectory lines
+        hide_ids=[],
 
 ):
 
@@ -262,6 +263,9 @@ def run(
                                 f.write(('%g ' * 11 + '\n') % (frame_idx + 1, cls, id, bbox_left,  # MOT format
                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, -1))
 
+                        if int(id) in hide_ids:
+                            continue  # 指定されたIDの場合、このイテレーションをスキップ
+
                         if save_vid or save_crop or show_vid:  # Add bbox to image
                             c = int(cls)  # integer class
                             id = int(id)  # integer id
@@ -395,6 +399,7 @@ def parse_opt():
     parser.add_argument('--hide-class', default=False, action='store_true', help='hide IDs')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
+    parser.add_argument('--hide-ids', nargs='+', type=int, default=[], help='list of IDs to hide')
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
     print_args(vars(opt))
